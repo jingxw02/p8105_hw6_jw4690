@@ -206,3 +206,18 @@ ggplot(city_results, aes(x = reorder(city_state, estimate), y = estimate, color 
 ```
 
 Most cities have odds ratios below 1, indicating that homicides involving male victims are generally less likely to be solved compared to female victims. Some cities show ORs near or above 1 (e.g., Albuquerque, Stockton), indicating a more balanced or higher likelihood of solving male victim cases. Wide confidence intervals in several cities suggest limited data or variability, which reduces the reliability of OR estimates in those areas. 
+
+## Problem 3
+
+```{r}
+birthweight_df = read_csv("./data/birthweight.csv")
+
+birthweight_df <- birthweight_df %>%
+  mutate(
+    babysex = as.factor(babysex),
+    frace = as.factor(frace),
+    mrace = as.factor(mrace),
+    malform = as.factor(malform),
+    bwt = as.numeric(bwt)
+  )
+```
