@@ -59,3 +59,25 @@ log_beta_product <- boot_results %>%
   group_by(.id) %>%
   summarise(log_product = log(prod(estimate)))
 ```
+
+```{r}
+# Confidence intervals for R-squared
+
+conf_intervals_r2 <- r_squared_results %>%
+  summarise(
+    r_squared_lower = quantile(r.squared, 0.025),
+    r_squared_upper = quantile(r.squared, 0.975)
+  )
+
+conf_intervals_r2
+
+# Confidence intervals for log(beta_0 * beta_1)
+
+conf_intervals_log_product <- log_beta_product %>%
+  summarise(
+    log_product_lower = quantile(log_product, 0.025),
+    log_product_upper = quantile(log_product, 0.975)
+  )
+
+conf_intervals_log_product
+```
