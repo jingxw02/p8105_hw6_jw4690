@@ -220,4 +220,11 @@ birthweight_df <- birthweight_df %>%
     malform = as.factor(malform),
     bwt = as.numeric(bwt)
   )
+
+# Fit a regression model
+
+birthweight_model <- lm(bwt ~ bhead + blength + gaweeks + delwt + fincome, data = birthweight_df)
+
+birthweight_model
 ```
+
