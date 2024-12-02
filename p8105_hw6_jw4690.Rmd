@@ -5,29 +5,45 @@ date: "2024-11-30"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, include = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
-library(rnoaa)
 library(broom)
 library(modelr)
+set.seed(1)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
-# Problem 1
+## Problem 1
 
-```{r download and preprocess data}
-weather_df <- rnoaa::meteo_pull_monitors(
-c("USW00094728"),
-var = c("PRCP", "TMIN", "TMAX"),
-date_min = "2017-01-01",
-date_max = "2017-12-31"
-) %>%
-mutate(
-name = recode(id, USW00094728 = "CentralPark_NY"),
-tmin = tmin / 10,
-tmax = tmax / 10
-) %>%
-select(name, id, everything())
+```{r}
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(id, USW00094728 = "CentralPark_NY"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
 ```
 
 ```{r}
@@ -97,3 +113,20 @@ ggplot(r_squared_results, aes(x = r.squared)) +
 ```
 
 The distribution of R-squared appears smooth and symmetric, resembling a bell-shaped curve. The majority of the density is concentrated between approximately 0.88 and 0.94. The dashed vertical lines represent the 95% confidence interval, ranging from 0.894 to 0.927. This indicates that the model consistently explains a large proportion of the variance in tmax, with minimal variability in explanatory power. The density plot confirms a lack of significant skewness, suggesting that the explanatory power of tmin is generally stable across bootstrap samples.
+
+```{r}
+# Plot distribution of log(beta_0 * beta_1)
+
+ggplot(log_beta_product, aes(x = log_product)) +
+  geom_density(fill = "blue", alpha = 0.7) +
+  geom_vline(xintercept = conf_intervals_log_product$log_product_lower, linetype = "dashed") +
+  geom_vline(xintercept = conf_intervals_log_product$log_product_upper, linetype = "dashed") +
+  labs(
+    title = "Density of log(β_0 * β_1)",
+    x = expression(log(beta[0] * beta[1])),
+    y = "Density"
+  )
+```
+
+The density distribution is smooth, nearly symmetric, and centered around 2.00, with the majority of the density concentrated between 1.95 and 2.10. The dashed vertical lines represent the 95% confidence interval, spanning from 1.96 to 2.06. This narrow interval indicates that the combined effect of β_0 and β_1 is highly consistent across bootstrap samples. The absence of noticeable skewness or outliers further suggests stability and reliability in this distribution.
+
