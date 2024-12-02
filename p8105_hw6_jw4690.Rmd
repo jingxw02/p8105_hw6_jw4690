@@ -238,3 +238,15 @@ birthweight_df |>
 ```
 
 In this analysis, the data was prepared by converting categorical variables (e.g., `babysex`, `frace`, `mrace`, `malform`) to factors and ensuring the dependent variable (`bwt`) was numeric. A multiple linear regression model was built to predict birth weight (`bwt`) using key predictors such as `bhead`, `blength`, `gaweeks`, `delwt`, and `fincome`. The model was fit using the `lm()` function, and residual analysis was conducted by plotting residuals against fitted values to evaluate model assumptions.
+
+```{r}
+# Fit Comparison Models
+
+# Model 1: Using length and gestational age
+
+model1 <- lm(bwt ~ blength + gaweeks, data = birthweight_df)
+
+# Model 2: Including head circumference, length, sex, and interactions
+
+model2 <- lm(bwt ~ bhead * blength * babysex, data = birthweight_df)
+```
