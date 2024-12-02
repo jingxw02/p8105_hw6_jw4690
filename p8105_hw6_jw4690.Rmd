@@ -228,3 +228,13 @@ birthweight_model <- lm(bwt ~ bhead + blength + gaweeks + delwt + fincome, data 
 birthweight_model
 ```
 
+```{r}
+birthweight_df |>
+  add_predictions(birthweight_model) |>
+  add_residuals(birthweight_model) |>
+  ggplot(aes(x = pred, y = resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+In this analysis, the data was prepared by converting categorical variables (e.g., `babysex`, `frace`, `mrace`, `malform`) to factors and ensuring the dependent variable (`bwt`) was numeric. A multiple linear regression model was built to predict birth weight (`bwt`) using key predictors such as `bhead`, `blength`, `gaweeks`, `delwt`, and `fincome`. The model was fit using the `lm()` function, and residual analysis was conducted by plotting residuals against fitted values to evaluate model assumptions.
