@@ -30,3 +30,32 @@ tmax = tmax / 10
 select(name, id, everything())
 ```
 
+```{r}
+# Create 5000 bootstrap samples
+
+boot_samples <- weather_df %>%
+  bootstrap(5000)
+
+# Fit linear models to bootstrap samples
+
+boot_results <- boot_samples %>%
+  mutate(
+    models = map(strap, ~ lm(tmax ~ tmin, data = .x)), 
+    glance = map(models, broom::glance), 
+    tidy = map(models, broom::tidy)
+  )
+
+# Extract R-squared values
+
+r_squared_results <- boot_results %>%
+  unnest(glance) %>%
+  select(.id, r.squared)
+
+# Extract log(beta_0 * beta_1)
+
+log_beta_product <- boot_results %>%
+  unnest(tidy) %>%
+  filter(term %in% c("(Intercept)", "tmin")) %>%
+  group_by(.id) %>%
+  summarise(log_product = log(prod(estimate)))
+```
