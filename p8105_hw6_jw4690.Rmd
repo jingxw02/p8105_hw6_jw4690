@@ -250,3 +250,25 @@ model1 <- lm(bwt ~ blength + gaweeks, data = birthweight_df)
 
 model2 <- lm(bwt ~ bhead * blength * babysex, data = birthweight_df)
 ```
+
+```{r}
+# Perform cross-validation
+
+cv_df <- crossv_mc(birthweight_df, 100) |>
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+# Fit models and calculate RMSE
+
+cv_res <- cv_df |>
+  mutate(
+    birthweight_model = map(train, ~lm(bwt ~ bhead + blength + gaweeks + delwt + fincome, data = .x)),
+    model1 = map(train, ~lm(bwt ~ blength + gaweeks, data = .x)),
+    model2 = map(train, ~lm(bwt ~ bhead * blength * babysex, data = .x)),
+    rmse_birthweight = map2_dbl(birthweight_model, test, ~rmse(.x, .y)),
+    rmse_model1 = map2_dbl(model1, test, ~rmse(.x, .y)),
+    rmse_model2 = map2_dbl(model2, test, ~rmse(.x, .y))
+  )
+```
